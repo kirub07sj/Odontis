@@ -1,8 +1,9 @@
 "use client";
 
-import { Search, Bell, User } from "lucide-react";
+import { Search, Bell, User, LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 export const Header = () => {
   const pathname = usePathname();
@@ -39,6 +40,14 @@ export const Header = () => {
         <button className="flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-sm relative hover:bg-gray-50 transition-colors">
           <Bell className="w-5 h-5 text-gray-500" />
           <span className="absolute top-3 right-3 block w-2 h-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+        </button>
+
+        <button 
+          onClick={() => signOut({ callbackUrl: "/login" })}
+          className="flex items-center justify-center w-12 h-12 bg-red-50 hover:bg-red-100 rounded-full shadow-sm transition-colors text-red-500"
+          title="Sign Out"
+        >
+          <LogOut className="w-5 h-5" />
         </button>
 
         <Link href={`/${pathname.split('/')[1]}/settings`} className="flex items-center gap-3 group cursor-pointer">

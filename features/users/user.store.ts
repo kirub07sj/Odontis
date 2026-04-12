@@ -8,9 +8,17 @@ export interface User {
   createdAt: string;
 }
 
+export interface DoctorAvailability {
+  id: string;
+  name: string;
+  assignedPatients: number;
+}
+
 interface UserStore {
   users: User[];
+  availableDoctors: DoctorAvailability[];
   isLoading: boolean;
+  isFetchingDoctors: boolean;
   error: string | null;
   
   isModalOpen: boolean;
@@ -18,6 +26,7 @@ interface UserStore {
   editingUser: User | null;
 
   fetchUsers: () => Promise<void>;
+  fetchDoctorAvailability: () => Promise<void>;
   addUser: (data: Partial<User> & { password?: string }) => Promise<void>;
   updateUser: (id: string, data: Partial<User> & { password?: string }) => Promise<void>;
   deleteUser: (id: string) => Promise<void>;
@@ -28,7 +37,9 @@ interface UserStore {
 
 export const useUserStore = create<UserStore>((set, get) => ({
   users: [],
+  availableDoctors: [],
   isLoading: false,
+  isFetchingDoctors: false,
   error: null,
   
   isModalOpen: false,
@@ -44,6 +55,18 @@ export const useUserStore = create<UserStore>((set, get) => ({
       set({ users: data, isLoading: false });
     } catch (error: any) {
       set({ error: error.message, isLoading: false });
+    }
+  },
+
+  fetchDoctorAvailability: async () => {
+    set({ isFetchingDoctors: true, error: null });
+    try {
+      const res = await fetch("/api/doctors/availability");
+      if (!res.ok) throw new Error("Failed to fetch doctor availability");
+      const data = await res.json();
+      set({ availableDoctors: data, isFetchingDoctors: false });
+    } catch (error: any) {
+      set({ error: error.message, isFetchingDoctors: false });
     }
   },
 
