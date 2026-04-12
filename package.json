@@ -15,7 +15,9 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.7.0",
     "@prisma/client": "^7.7.0",
+    "aos": "^2.3.4",
     "bcrypt": "^6.0.0",
+    "lucide-react": "^1.8.0",
     "next": "16.2.3",
     "next-auth": "^4.24.13",
     "pg": "^8.20.0",

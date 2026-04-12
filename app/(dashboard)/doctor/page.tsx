@@ -1,53 +1,108 @@
-import { getAuthSession } from "@/lib/auth";
-import { redirect } from "next/navigation";
+"use client";
 
-export default async function DoctorDashboardPage() {
-  const session = await getAuthSession();
+import { useState } from "react";
 
-  if (!session) {
-    redirect("/login");
-  }
+const todayPatients = [
+  { id: "3245", name: "Yonathan Nega", status: "In Treatment" },
+  { id: "3245", name: "Yonathan Nega", status: "waiting" },
+  { id: "3245", name: "Yonathan Nega", status: "waiting" },
+  { id: "3245", name: "Yonathan Nega", status: "waiting" },
+  { id: "3245", name: "Yonathan Nega", status: "Done" },
+];
 
-  if (session.user.role !== "DOCTOR") {
-    return (
-      <div className="p-8 text-center text-red-500">
-        <h1 className="text-2xl font-bold">Unauthorized</h1>
-        <p>You do not have permission to view the Doctor Dashboard.</p>
-      </div>
-    );
-  }
+const appointedPatients = [
+  { id: "3245", name: "Yonathan Nega", date: "Jan 31, 2026" },
+  { id: "3245", name: "Yonathan Nega", date: "Jan 31, 2026" },
+  { id: "3245", name: "Yonathan Nega", date: "Jan 31, 2026" },
+];
+
+export default function DoctorDashboardPage() {
+  const [activeTab, setActiveTab] = useState("Dashboard");
 
   return (
-    <div className="min-h-screen p-8 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-      <div className="max-w-5xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold">Doctor Dashboard</h1>
-          <div className="px-4 py-2 bg-green-600 text-white rounded-md shadow">
-            Role: {session.user.role}
-          </div>
+    <div className="w-full flex flex-col gap-8 bg-white shadow-sm rounded-3xl p-6 md:p-10 font-sans">
+      
+      {/* Top Navigation Row */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-2">
+        <div className="flex items-center gap-4 text-[15px] font-bold">
+          <button 
+            onClick={() => setActiveTab("Dashboard")}
+            className={`px-6 py-2.5 rounded-[8px] transition-colors ${activeTab === "Dashboard" ? "bg-[#0ea5e9] text-white shadow-sm" : "bg-transparent text-[#111] hover:text-[#0ea5e9]"}`}
+          >
+            Dashboard
+          </button>
+          <button 
+            onClick={() => setActiveTab("Patients")}
+            className={`px-6 py-2.5 rounded-[8px] transition-colors ${activeTab === "Patients" ? "bg-[#0ea5e9] text-white shadow-sm" : "bg-transparent text-[#111] hover:text-[#0ea5e9]"}`}
+          >
+            Patients
+          </button>
+          <button 
+            onClick={() => setActiveTab("Appointment")}
+            className={`px-6 py-2.5 rounded-[8px] transition-colors ${activeTab === "Appointment" ? "bg-[#0ea5e9] text-white shadow-sm" : "bg-transparent text-[#111] hover:text-[#0ea5e9]"}`}
+          >
+            Appointment
+          </button>
         </div>
+      </div>
+
+      {/* Main Content Columns */}
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
         
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
-          <h2 className="text-xl font-semibold mb-2">Welcome, Dr. {session.user.name}</h2>
-          <p className="text-gray-600 dark:text-gray-300">
-            Here you can view your upcoming appointments, access patient medical records, and update prescriptions.
-          </p>
+        {/* Left Column - Today's Patients */}
+        <div className="flex-1 bg-[#fafafa] rounded-3xl p-8">
+          <h2 className="text-[22px] font-extrabold text-[#4a4a4a] mb-8">Today’s Patients List</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="text-[15px] text-gray-500 font-bold">
+                  <th className="pb-6 font-bold w-[40%]">Full Name</th>
+                  <th className="pb-6 font-bold w-[30%]">Patient ID</th>
+                  <th className="pb-6 font-bold w-[30%] text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody className="text-[15px] font-bold text-[#111]">
+                {todayPatients.map((patient, index) => (
+                  <tr key={index} className="border-t border-gray-300">
+                    <td className="py-5">{patient.name}</td>
+                    <td className="py-5">{patient.id}</td>
+                    <td className="py-5 text-center">
+                      <span className="inline-block bg-[#0ea5e9] text-white px-5 py-2 rounded-full text-[13px] font-bold min-w-[120px]">
+                        {patient.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-lg transition">
-            <h3 className="font-bold text-lg">My Appointments</h3>
-            <p className="text-sm text-gray-500 mt-2">Check your schedule for today and upcoming days.</p>
-          </div>
-          <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-lg transition">
-            <h3 className="font-bold text-lg">Patient Directory</h3>
-            <p className="text-sm text-gray-500 mt-2">Search securely through your assigned patients' history.</p>
-          </div>
-          <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-lg transition">
-            <h3 className="font-bold text-lg">Medical Records</h3>
-            <p className="text-sm text-gray-500 mt-2">Add clinical notes, forms, and treatments during visits.</p>
+        {/* Right Column - Appointed Patients */}
+        <div className="flex-1 bg-[#fafafa] rounded-3xl p-8">
+          <h2 className="text-[22px] font-extrabold text-[#4a4a4a] mb-8">Appointed Patients List</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="text-[15px] text-gray-500 font-bold">
+                  <th className="pb-6 font-bold w-[40%]">Full Name</th>
+                  <th className="pb-6 font-bold w-[30%]">Patient ID</th>
+                  <th className="pb-6 font-bold w-[30%]">Date</th>
+                </tr>
+              </thead>
+              <tbody className="text-[15px] font-bold text-[#111]">
+                {appointedPatients.map((patient, index) => (
+                  <tr key={index} className="border-t border-gray-300">
+                    <td className="py-5">{patient.name}</td>
+                    <td className="py-5">{patient.id}</td>
+                    <td className="py-5 text-gray-500 font-semibold">{patient.date}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
+
       </div>
     </div>
   );
