@@ -31,17 +31,7 @@ const testUsers = [
     email: "admin@odontis.test",
     name: "Admin User",
     role: UserRole.ADMIN,
-  },
-  {
-    email: "doctor@odontis.test",
-    name: "Doctor User",
-    role: UserRole.DOCTOR,
-  },
-  {
-    email: "receptionist@odontis.test",
-    name: "Receptionist User",
-    role: UserRole.RECEPTIONIST,
-  },
+  }
 ];
 
 async function main() {

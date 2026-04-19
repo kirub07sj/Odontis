@@ -113,7 +113,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
     set((state) => ({ users: state.users.filter((u) => u.id !== id) }));
   },
 
-  openModal: (mode, user = null) => {
+  openModal: (mode, user = null as User | null) => {
     set({ isModalOpen: true, modalMode: mode, editingUser: user });
   },
 
