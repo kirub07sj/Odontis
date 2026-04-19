@@ -15,10 +15,12 @@ export default async function DoctorAppointmentsPage() {
   const appointments = await getDoctorAppointments(doctor.id);
 
   const now = new Date();
-  const futureAppointments = (appointments || []).filter((a) => {
+  const futureAppointments = (appointments || []).filter(
+    (a: (typeof appointments)[number]) => {
     const dt = a.datetime ? new Date(a.datetime) : null;
     return dt ? dt.getTime() > now.getTime() : false;
-  });
+    },
+  );
 
   return (
     <div className="flex w-full flex-col gap-8 rounded-3xl bg-white p-6 font-sans shadow-sm md:p-10">
