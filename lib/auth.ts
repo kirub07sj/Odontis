@@ -1,5 +1,4 @@
 import bcrypt from "bcrypt";
-import type { UserRole } from "@prisma/client";
 import { getServerSession, type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
@@ -67,7 +66,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (session.user && token.sub && token.role) {
         session.user.id = token.sub;
-        session.user.role = token.role as UserRole;
+        session.user.role = token.role as "ADMIN" | "DOCTOR" | "RECEPTIONIST";
       }
 
       return session;
