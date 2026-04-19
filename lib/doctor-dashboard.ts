@@ -187,13 +187,26 @@ export async function getDoctorPatientsGrouped(doctorId: string) {
     },
   });
 
+  const normalizeAppointmentStatus = (value: string) =>
+    value.toUpperCase().replace(/-/g, "_");
+
   const waiting = patients
-    .filter((p) => p.status === "WAITING")
+    .filter((p) => {
+      const latestStatus = p.appointments[0]?.status;
+      return normalizeAppointmentStatus(latestStatus || "WAITING") === "WAITING";
+    })
     .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
 
-  const inTreatment = patients.filter((p) => p.status === "IN_TREATMENT");
+  const inTreatment = patients.filter((p) => {
+    const latestStatus = p.appointments[0]?.status;
+    return normalizeAppointmentStatus(latestStatus || "WAITING") === "IN_TREATMENT";
+  });
 
-  const completed = patients.filter((p) => p.status === "COMPLETED");
+  const completed = patients.filter((p) => {
+    const latestStatus = p.appointments[0]?.status;
+    const normalized = normalizeAppointmentStatus(latestStatus || "WAITING");
+    return normalized === "COMPLETED" || normalized === "DONE";
+  });
 
   return { waiting, inTreatment, completed };
 }
