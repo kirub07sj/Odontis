@@ -44,6 +44,8 @@ export default function TreatmentWorkflow({
   completedAt,
   initial,
 }: TreatmentWorkflowProps) {
+  const getErrorMessage = (error: unknown, fallback: string) =>
+    error instanceof Error ? error.message : fallback;
   const router = useRouter();
   const [status, setStatus] = useState<WorkflowStatus>(
     normalizeStatus(initialStatus),
@@ -110,8 +112,8 @@ export default function TreatmentWorkflow({
       setCompletedAtLocal(null);
       setSuccess("Treatment started. Medical form is now editable.");
       router.refresh();
-    } catch (err: any) {
-      setError(err?.message || "Failed to start treatment.");
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, "Failed to start treatment."));
     } finally {
       setLoading(false);
     }
@@ -133,8 +135,8 @@ export default function TreatmentWorkflow({
       setCompletedAtLocal(new Date().toISOString());
       setSuccess("Treatment completed and medical record saved.");
       router.refresh();
-    } catch (err: any) {
-      setError(err?.message || "Failed to complete treatment.");
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, "Failed to complete treatment."));
     } finally {
       setLoading(false);
     }

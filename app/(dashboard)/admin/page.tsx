@@ -6,6 +6,8 @@ import { useUserStore } from "@/features/users/user.store";
 import { Modal } from "@/components/ui/modal";
 
 export default function AdminDashboardPage() {
+  const getErrorMessage = (error: unknown) =>
+    error instanceof Error ? error.message : "Something went wrong.";
   const [activeTab, setActiveTab] = useState("Staff Management");
   
   const { 
@@ -53,8 +55,8 @@ export default function AdminDashboardPage() {
         await updateUser(editingUser.id, formData);
       }
       closeModal();
-    } catch (err: any) {
-      setFormError(err.message || "Something went wrong.");
+    } catch (err: unknown) {
+      setFormError(getErrorMessage(err));
     } finally {
       setFormLoading(false);
     }
@@ -64,8 +66,8 @@ export default function AdminDashboardPage() {
     if (confirm(`Are you sure you want to delete ${name}?`)) {
       try {
         await deleteUser(id);
-      } catch (err: any) {
-        alert(err.message);
+      } catch (err: unknown) {
+        alert(getErrorMessage(err));
       }
     }
   };
@@ -219,7 +221,12 @@ export default function AdminDashboardPage() {
             <label className="block text-sm font-bold text-gray-600">Assigned Role</label>
             <select
               value={formData.role}
-              onChange={(e) => setFormData(prev => ({ ...prev, role: e.target.value as any }))}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  role: e.target.value as "RECEPTIONIST" | "DOCTOR" | "ADMIN",
+                }))
+              }
               className="w-full p-4 bg-[#fcfcfc] border border-gray-200 rounded-xl outline-none focus:ring-[3px] focus:ring-[#0ea5e9]/20 focus:border-[#0ea5e9] transition-all text-[15px] font-bold appearance-none cursor-pointer"
             >
               <option value="RECEPTIONIST">Receptionist</option>

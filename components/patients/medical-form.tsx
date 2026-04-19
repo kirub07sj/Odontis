@@ -10,6 +10,8 @@ export default function MedicalForm({
   patientId: string;
   initial?: { diagnosis?: string; treatment?: string; prescription?: string; additionalInfo?: string };
 }) {
+  const getErrorMessage = (error: unknown) =>
+    error instanceof Error ? error.message : "Failed to save";
   const router = useRouter();
   const [diagnosis, setDiagnosis] = useState(initial.diagnosis || "");
   const [treatment, setTreatment] = useState(initial.treatment || "");
@@ -30,8 +32,8 @@ export default function MedicalForm({
       });
       if (!res.ok) throw new Error(await res.text());
       router.refresh();
-    } catch (err: any) {
-      setError(err.message || "Failed to save");
+    } catch (err: unknown) {
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }

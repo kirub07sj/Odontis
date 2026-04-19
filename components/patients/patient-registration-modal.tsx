@@ -7,6 +7,8 @@ import { useUserStore } from "@/features/users/user.store";
 import { usePatientStore, PatientFormData } from "@/features/patients/patient.store";
 
 export function PatientRegistrationModal() {
+  const getErrorMessage = (error: unknown) =>
+    error instanceof Error ? error.message : "Failed to register patient";
   const { isRegistrationModalOpen, closeRegistrationModal, registerPatient } = usePatientStore();
   const { availableDoctors, fetchDoctorAvailability, isFetchingDoctors } = useUserStore();
 
@@ -60,8 +62,8 @@ export function PatientRegistrationModal() {
         gender: "", address: "", additionalInfo: "", doctorId: ""
       });
       closeRegistrationModal();
-    } catch (err: any) {
-      setError(err.message || "Failed to register patient");
+    } catch (err: unknown) {
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -136,7 +138,7 @@ export function PatientRegistrationModal() {
             
             <div className="flex items-end gap-4 mb-4">
               <div className="flex-1 space-y-1.5">
-                <label className="text-[13px] font-bold text-gray-400">Doctor's Name</label>
+                <label className="text-[13px] font-bold text-gray-400">Doctor Name</label>
                 <div className="w-full p-4 bg-[#f8f8f8] border border-gray-100 rounded-2xl font-bold text-gray-900 shadow-inner">
                    {selectedDoctor ? selectedDoctor.name : isFetchingDoctors ? "Loading..." : "Select below"}
                 </div>

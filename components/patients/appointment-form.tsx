@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function AppointmentForm({ patientId }: { patientId: string }) {
+  const getErrorMessage = (error: unknown) =>
+    error instanceof Error ? error.message : "Failed to create appointment";
   const router = useRouter();
   const [datetime, setDatetime] = useState("");
   const [loading, setLoading] = useState(false);
@@ -21,8 +23,8 @@ export default function AppointmentForm({ patientId }: { patientId: string }) {
       });
       if (!res.ok) throw new Error(await res.text());
       router.refresh();
-    } catch (err: any) {
-      setError(err.message || "Failed to create appointment");
+    } catch (err: unknown) {
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }

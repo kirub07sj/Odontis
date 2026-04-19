@@ -1,11 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 
 import { useState, useEffect, useMemo } from "react";
 import { useUserStore } from "@/features/users/user.store";
-import { usePatientStore } from "@/features/patients/patient.store";
+import {
+  usePatientStore,
+  type PatientRecord,
+} from "@/features/patients/patient.store";
 import { PatientRegistrationModal } from "@/components/patients/patient-registration-modal";
 import { PatientProfileModal } from "@/components/patients/patient-profile-modal";
 
@@ -131,7 +133,7 @@ export default function ReceptionDashboardPage() {
                   <td colSpan={5} className="py-8 text-center text-gray-500">No patients registered yet.</td>
                 </tr>
               )}
-              {recentPatients.map((patient: any) => (
+              {recentPatients.map((patient: PatientRecord) => (
                 <tr 
                   key={patient.id} 
                   onClick={() => openProfileModal(patient.id)}

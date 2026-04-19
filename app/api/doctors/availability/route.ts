@@ -29,9 +29,9 @@ export async function GET() {
           }
         }
       }
-    } as any);
+    });
 
-    const mapped = doctors.map((doc: any) => ({
+    const mapped = doctors.map((doc) => ({
       id: doc.id,
       name: doc.name,
       assignedPatients: doc._count.appointments

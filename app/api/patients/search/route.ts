@@ -19,7 +19,7 @@ export async function GET(req: Request) {
       return NextResponse.json([]);
     }
 
-    const patients = await (prisma as any).patient.findMany({
+    const patients = await prisma.patient.findMany({
       where: {
         OR: [
           { fullName: { contains: q, mode: "insensitive" } },

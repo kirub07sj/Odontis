@@ -53,8 +53,9 @@ export const useUserStore = create<UserStore>((set, get) => ({
       if (!res.ok) throw new Error("Failed to fetch users");
       const data = await res.json();
       set({ users: data, isLoading: false });
-    } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to fetch users";
+      set({ error: message, isLoading: false });
     }
   },
 
@@ -65,8 +66,10 @@ export const useUserStore = create<UserStore>((set, get) => ({
       if (!res.ok) throw new Error("Failed to fetch doctor availability");
       const data = await res.json();
       set({ availableDoctors: data, isFetchingDoctors: false });
-    } catch (error: any) {
-      set({ error: error.message, isFetchingDoctors: false });
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Failed to fetch doctor availability";
+      set({ error: message, isFetchingDoctors: false });
     }
   },
 

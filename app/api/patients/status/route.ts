@@ -100,28 +100,6 @@ export async function POST(req: Request) {
       },
     });
 
-    // Best effort: keep Patient workflow fields in sync when these columns exist.
-    try {
-      const patientWorkflowData: any =
-        status === "IN_TREATMENT"
-          ? {
-              status: "IN_TREATMENT",
-              startedAt: new Date(),
-              completedAt: null,
-            }
-          : {
-              status: "COMPLETED",
-              completedAt: new Date(),
-            };
-
-      await prisma.patient.update({
-        where: { id: patientId },
-        data: patientWorkflowData,
-      });
-    } catch {
-      // Ignore when Patient workflow fields are unavailable in current DB/client.
-    }
-
     return NextResponse.json(updated);
   } catch (error) {
     console.error("[PATIENT_STATUS_UPDATE]", error);

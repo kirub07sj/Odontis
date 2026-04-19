@@ -38,10 +38,19 @@ export default async function PatientDetailsPage({
   }
 
   const latestVisit = patient.appointments[0] ?? null;
-  const patientAny = patient as any;
-  const patientStatus = patientAny.status ?? (latestVisit?.status ?? "WAITING");
-  const patientStartedAt = patientAny.startedAt ? String(patientAny.startedAt) : null;
-  const patientCompletedAt = patientAny.completedAt ? String(patientAny.completedAt) : null;
+  const patientWithWorkflow = patient as typeof patient & {
+    status?: string;
+    startedAt?: Date | null;
+    completedAt?: Date | null;
+  };
+  const patientStatus =
+    patientWithWorkflow.status ?? (latestVisit?.status ?? "WAITING");
+  const patientStartedAt = patientWithWorkflow.startedAt
+    ? String(patientWithWorkflow.startedAt)
+    : null;
+  const patientCompletedAt = patientWithWorkflow.completedAt
+    ? String(patientWithWorkflow.completedAt)
+    : null;
 
   return (
     <div className="flex w-full flex-col gap-8 rounded-3xl bg-white p-6 font-sans shadow-sm md:p-10">
@@ -180,7 +189,8 @@ export default async function PatientDetailsPage({
               No appointment history found for this patient.
             </p>
           ) : null}
-          {patient.appointments.map((appointment) => (
+          {patient.appointments.map(
+            (appointment: (typeof patient.appointments)[number]) => (
             <div
               key={appointment.id}
               className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm"
@@ -199,7 +209,8 @@ export default async function PatientDetailsPage({
                 </span>
               </div>
             </div>
-          ))}
+            ),
+          )}
         </div>
       </DoctorCard>
     </div>

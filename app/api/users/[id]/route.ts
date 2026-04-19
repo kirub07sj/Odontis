@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import type { Prisma } from "@prisma/client";
 
 export async function PUT(
   req: Request,
@@ -27,7 +28,7 @@ export async function PUT(
       return new NextResponse("Missing required fields", { status: 400 });
     }
 
-    const updateData: any = {
+    const updateData: Prisma.UserUpdateInput = {
       name,
       email,
       role,

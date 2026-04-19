@@ -29,7 +29,21 @@ interface PatientStore {
   openRegistrationModal: () => void;
   closeRegistrationModal: () => void;
   
-  selectedPatientProfile: any | null;
+  selectedPatientProfile: {
+    id: string;
+    fullName: string;
+    phoneNumber: string;
+    age: string;
+    gender: string;
+    address?: string | null;
+    additionalInfo?: string | null;
+    appointments?: Array<{
+      id: string;
+      doctorId: string;
+      datetime: string | Date;
+      doctor?: { name?: string };
+    }>;
+  } | null;
   isProfileModalOpen: boolean;
   openProfileModal: (id: string) => Promise<void>;
   closeProfileModal: () => void;
@@ -57,8 +71,9 @@ export const usePatientStore = create<PatientStore>((set, get) => ({
       if (!res.ok) throw new Error("Failed to fetch profile");
       const data = await res.json();
       set({ selectedPatientProfile: data, isLoading: false });
-    } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to fetch profile";
+      set({ error: message, isLoading: false });
     }
   },
   closeProfileModal: () => set({ isProfileModalOpen: false, selectedPatientProfile: null }),
@@ -70,8 +85,10 @@ export const usePatientStore = create<PatientStore>((set, get) => ({
       if (!res.ok) throw new Error("Failed to fetch recent patients");
       const data = await res.json();
       set({ recentPatients: data, isLoading: false });
-    } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Failed to fetch recent patients";
+      set({ error: message, isLoading: false });
     }
   },
 
@@ -90,7 +107,7 @@ export const usePatientStore = create<PatientStore>((set, get) => ({
       // Auto-refresh the recent patients list
       await get().fetchRecentPatients();
       await useUserStore.getState().fetchDoctorAvailability();
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw error;
     }
   },
@@ -112,7 +129,7 @@ export const usePatientStore = create<PatientStore>((set, get) => ({
       await useUserStore.getState().fetchDoctorAvailability();
       const updatedProfile = await res.json();
       set({ selectedPatientProfile: updatedProfile });
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw error;
     }
   }

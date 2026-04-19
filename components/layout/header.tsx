@@ -7,6 +7,12 @@ import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { usePatientStore } from "@/features/patients/patient.store";
 
+interface SearchPatientResult {
+  id: string;
+  fullName: string;
+  phoneNumber: string;
+}
+
 export const Header = () => {
   const pathname = usePathname();
   const { data: session, status } = useSession();
@@ -14,7 +20,7 @@ export const Header = () => {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
-  const [results, setResults] = useState<any[]>([]);
+  const [results, setResults] = useState<SearchPatientResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
@@ -110,7 +116,7 @@ export const Header = () => {
                  <div className="w-8 h-8 border-4 border-gray-200 border-t-[#0ea5e9] rounded-full animate-spin"></div>
                </div>
              ) : results.length > 0 ? (
-               results.map((patient: any) => (
+               results.map((patient) => (
                  <div 
                    key={patient.id}
                    onClick={() => handleResultClick(patient.id)}

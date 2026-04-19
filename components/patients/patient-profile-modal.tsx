@@ -7,6 +7,8 @@ import { useUserStore } from "@/features/users/user.store";
 import { usePatientStore, PatientFormData } from "@/features/patients/patient.store";
 
 export function PatientProfileModal() {
+  const getErrorMessage = (error: unknown) =>
+    error instanceof Error ? error.message : "Failed to update patient";
   const { isProfileModalOpen, closeProfileModal, selectedPatientProfile, updatePatient, isLoading: isFetchingProfile } = usePatientStore();
   const { availableDoctors, fetchDoctorAvailability, isFetchingDoctors } = useUserStore();
 
@@ -71,8 +73,8 @@ export function PatientProfileModal() {
     try {
       await updatePatient(selectedPatientProfile.id, formData);
       closeProfileModal();
-    } catch (err: any) {
-      setError(err.message || "Failed to update patient");
+    } catch (err: unknown) {
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -169,7 +171,7 @@ export function PatientProfileModal() {
                   
                   <div className="flex items-end gap-4 mb-4">
                     <div className="flex-1 space-y-1.5">
-                      <label className="text-[13px] font-bold text-gray-400">Doctor's Name</label>
+                      <label className="text-[13px] font-bold text-gray-400">Doctor Name</label>
                       <div className="w-full p-4 bg-[#f8f8f8] border border-gray-100 rounded-2xl font-bold text-gray-900 shadow-inner">
                          {selectedDoctor ? selectedDoctor.name : isFetchingDoctors ? "Loading..." : "Select below"}
                       </div>
@@ -246,12 +248,12 @@ export function PatientProfileModal() {
 
             {/* Visit History Timeline full width under the main grid */}
             <div className="mt-2 w-full flex flex-col gap-4">
-              <h3 className="font-extrabold text-[18px] text-[#111]">Patient's Visit History</h3>
+              <h3 className="font-extrabold text-[18px] text-[#111]">Patient Visit History</h3>
               <div className="flex flex-col gap-3 relative pb-4">
                 {/* Timeline vertical line */}
                 <div className="absolute left-[38px] top-6 bottom-6 w-0.5 bg-gray-200 z-0"></div>
                 
-                {visits.map((visit: any, idx: number) => (
+                {visits.map((visit) => (
                     <div key={visit.id} className="relative z-10 flex items-center gap-6">
                       {/* Circle Node */}
                       <div className="w-20 flex justify-center">

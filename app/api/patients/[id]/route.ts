@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import type { Prisma } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
@@ -66,7 +67,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     const latestAppointment = currentPatient?.appointments[0];
 
     // Build update parameters
-    const updateData: any = {
+    const updateData: Prisma.PatientUpdateInput = {
       fullName,
       phoneNumber,
       age,

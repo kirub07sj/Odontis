@@ -14,6 +14,8 @@ export default function PatientStatusActions({
   startedAt?: string | null;
   completedAt?: string | null;
 }) {
+  const getErrorMessage = (error: unknown) =>
+    error instanceof Error ? error.message : "Failed to update status";
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,8 +31,8 @@ export default function PatientStatusActions({
       });
       if (!res.ok) throw new Error(await res.text());
       router.refresh();
-    } catch (err: any) {
-      setError(err.message || "Failed to update status");
+    } catch (err: unknown) {
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
